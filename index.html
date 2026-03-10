@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công Cụ Tính Chi Phí Vận Chuyển</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 p-6 md:p-10">
+
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+        <h1 class="text-3xl font-extrabold text-slate-800 mb-2 text-center">🚚 Tính Chi Phí Vận Chuyển</h1>
+        <p class="text-center text-slate-500 mb-8 italic">Nhập dữ liệu vào các ô xanh để nhận kết quả tự động</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="space-y-4">
+                <h3 class="font-bold text-blue-600 border-b pb-2 uppercase text-sm">Dữ liệu đầu vào</h3>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tổng thời gian giao hàng (a - giờ)</label>
+                    <input id="input_a" type="number" step="any" oninput="runCalculator()" 
+                           placeholder="Ví dụ: 2.5" class="w-full p-3 mt-1 bg-blue-50 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tiền xăng dầu (c - VNĐ/Lít)</label>
+                    <input id="input_c" type="number" step="1" oninput="runCalculator()" 
+                           placeholder="Ví dụ: 23000" class="w-full p-3 mt-1 bg-blue-50 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Quãng đường (d - km)</label>
+                    <input id="input_d" type="number" step="any" oninput="runCalculator()" 
+                           placeholder="Ví dụ: 150" class="w-full p-3 mt-1 bg-blue-50 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Trọng lượng hàng hóa (f - kg)</label>
+                    <input id="input_f" type="number" step="any" oninput="runCalculator()" 
+                           placeholder="Ví dụ: 50" class="w-full p-3 mt-1 bg-blue-50 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="font-bold text-amber-600 border-b pb-2 uppercase text-sm">Kết quả trung gian</h3>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Lương tài xế (b = a * 52.884)</label>
+                    <input id="output_b" type="text" readonly 
+                           class="w-full p-3 mt-1 bg-gray-100 border border-gray-200 rounded-lg text-gray-600 font-semibold cursor-not-allowed">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Phí xăng dầu (e = d * 9/100 * c)</label>
+                    <input id="output_e" type="text" readonly 
+                           class="w-full p-3 mt-1 bg-gray-100 border border-gray-200 rounded-lg text-gray-600 font-semibold cursor-not-allowed">
+                </div>
+                
+                <div class="mt-6 p-4 bg-green-600 rounded-xl text-white text-center shadow-md">
+                    <p class="text-sm opacity-90 uppercase font-bold tracking-wider">Tổng chi phí / kg</p>
+                    <p class="text-3xl font-black mt-1"><span id="final_result">0</span> <span class="text-lg">đ</span></p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+            <button onclick="window.location.reload()" class="text-sm text-slate-400 hover:text-red-500 transition-colors">
+                🔄 Làm mới toàn bộ
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function runCalculator() {
+            // Lấy giá trị input và chuyển sang số (mặc định là 0 nếu để trống)
+            const a = parseFloat(document.getElementById('input_a').value) || 0;
+            const c = parseFloat(document.getElementById('input_c').value) || 0;
+            const d = parseFloat(document.getElementById('input_d').value) || 0;
+            const f = parseFloat(document.getElementById('input_f').value) || 0;
+
+            // 1. Tính Lương tài xế (b)
+            const b = a * 52884;
+            document.getElementById('output_b').value = b.toLocaleString('vi-VN') + " VNĐ";
+
+            // 2. Tính Chi phí xăng dầu (e)
+            const e = (d * 9 / 100) * c;
+            document.getElementById('output_e').value = e.toLocaleString('vi-VN') + " VNĐ";
+
+            // 3. Tính Tổng chi phí / kg
+            let final = 0;
+            if (f > 0) {
+                final = (b + e) / f;
+            }
+
+            // Hiển thị kết quả cuối cùng (Làm tròn 2 chữ số thập phân)
+            document.getElementById('final_result').innerText = final.toLocaleString('vi-VN', { maximumFractionDigits: 2 });
+        }
+    </script>
+</body>
+</html>
