@@ -1,0 +1,35 @@
+name: Update Petrolimex Prices
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Chạy tự động lúc 7h sáng giờ VN hàng ngày
+  workflow_dispatch:      # Cho phép bấm nút chạy thủ công trên GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # Quan trọng: Cho phép bot ghi đè file vào repo
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Run scraper
+        run: python update_price.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "actions@github.com"
+          git add prices.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update prices" && git push)
