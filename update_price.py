@@ -2,23 +2,27 @@ import requests
 import json
 
 def get_prices():
-    # DÁN CÁI URL BẠN VỪA COPY Ở BƯỚC 1 VÀO ĐÂY
-    google_proxy_url = "https://script.google.com/macros/s/AKfycbzLlpJkxQmcFvrbxZdyOjiGg7cnz0y9XBuzSAvhawdUWavFnu8jfkfn_OzGhC9DtzdQTA/exec"
+    # THAY CÁI LINK DƯỚI ĐÂY BẰNG LINK BẠN VỪA COPY Ở BƯỚC 1
+    api_url = "https://script.google.com/macros/s/AKfycbx-at4XXWjvADhm0I20ePZmkniVVt51Vh4K1JaESQ6y1ZkSQ3uD95DIwsY-OpB9iV6Hag/exec"
     
     try:
-        # Google Web App thường yêu cầu chuyển hướng (Redirect)
-        response = requests.get(google_proxy_url, allow_redirects=True, timeout=30)
-        data = response.json()
+        # Google Web App sẽ có lệnh chuyển hướng (Redirect), requests xử lý được
+        response = requests.get(api_url, timeout=30)
+        result = response.json()
         
-        if data.get("RON95") and data.get("DO"):
-            print(f"Giá lấy thành công qua Google Proxy: {data}")
+        if result.get("RON95") and result.get("DO") and result["RON95"] > 0:
+            print(f"Lấy giá thành công từ Google Proxy: {result}")
+            
             with open('prices.json', 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=4)
+                json.dump({
+                    "RON95": result["RON95"],
+                    "DO": result["DO"]
+                }, f, ensure_ascii=False, indent=4)
         else:
-            print("Google lấy được dữ liệu nhưng không thấy số giá.")
+            print("Google Proxy chạy được nhưng Petrolimex vẫn đang chặn hoặc thay đổi giao diện.")
             
     except Exception as e:
-        print(f"Lỗi khi gọi Google Proxy: {e}")
+        print(f"Lỗi kết nối đến Proxy: {e}")
 
 if __name__ == "__main__":
     get_prices()
