@@ -3,7 +3,7 @@ import json
 
 def get_prices():
     # THAY CÁI LINK DƯỚI ĐÂY BẰNG LINK BẠN VỪA COPY Ở BƯỚC 1
-    api_url = "https://script.google.com/macros/s/AKfycbx-at4XXWjvADhm0I20ePZmkniVVt51Vh4K1JaESQ6y1ZkSQ3uD95DIwsY-OpB9iV6Hag/exec"
+    api_url = "https://script.google.com/macros/s/AKfycbz01JmHtP9IuA2ut2EXDBBHj0_EsbSTR1pg8NGtAjM-GCkIxafKLvWXliccdE5G_4qMSA/exec"
     
     try:
         # Google Web App sẽ có lệnh chuyển hướng (Redirect), requests xử lý được
