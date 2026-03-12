@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -128,43 +129,49 @@
 
     <script>
     // GIỮ NGUYÊN TOÀN BỘ LOGIC CŨ CỦA BẠN
-    async function loadAutoPrices() {
-        const statusTag = document.getElementById('status-tag');
-        try {
-            const timestamp = new Date().getTime();
-            const response = await fetch(`prices.json?v=${timestamp}`);
-            if (!response.ok) throw new Error('ERR');
-            const data = await response.json();
-            const select = document.getElementById('fuel_type');
-            if (data.RON95 && data.DO) {
-                select.options[0].value = data.RON95;
-                select.options[0].text = `Xăng RON 95-V (${data.RON95.toLocaleString('vi-VN')}đ)`;
-                select.options[1].value = data.DO;
-                select.options[1].text = `Dầu DO 0,001S-V (${data.DO.toLocaleString('vi-VN')}đ)`;
-                statusTag.innerText = "● Đã đồng bộ giá Petrolimex";
-                statusTag.className = "px-4 py-1 bg-genshaiYellow text-genshaiBlue text-xs font-bold rounded-full";
-            }
-            runCalculator(); 
-        } catch (e) {
-            statusTag.innerText = "● Dùng giá dự phòng";
-            statusTag.className = "px-4 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full";
-        }
-    }
+    async function triggerGitHubJob() {
+    const btn = document.getElementById('btn-update');
+    const statusTag = document.getElementById('status-tag');
+    
+    // THAY THÔNG TIN CỦA BẠN VÀO ĐÂY
+    const GITHUB_TOKEN = "github_pat_CÁI_MÃ_CỦA_BẠN"; 
+    const REPO_OWNER = "TÊN_USER_CỦA_BẠN";
+    const REPO_NAME = "TÊN_KHO_CỦA_BẠN";
 
-    function runCalculator() {
-        const a = parseFloat(document.getElementById('input_a').value) || 0;
-        const c = parseFloat(document.getElementById('fuel_type').value) || 0;
-        const d = parseFloat(document.getElementById('input_d').value) || 0;
-        const f = parseFloat(document.getElementById('input_f').value) || 0;
-        const b = a * 52884;
-        document.getElementById('output_b').innerText = b.toLocaleString('vi-VN') + " VNĐ";
-        const e = (d * 9 / 100) * c;
-        document.getElementById('output_e').innerText = e.toLocaleString('vi-VN') + " VNĐ";
-        let final = 0;
-        if (f > 0) final = (b + e) / f;
-        document.getElementById('final_result').innerText = final.toLocaleString('vi-VN', { maximumFractionDigits: 1 });
+    btn.classList.add('animate-spin');
+    btn.disabled = true;
+    statusTag.innerText = "🚀 Đang gửi lệnh tới GitHub...";
+
+    try {
+        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/dispatches`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ event_type: 'manual-update' })
+        });
+
+        if (response.ok || response.status === 204) {
+            statusTag.innerText = "✅ Đang xử lý trên Server (đợi 30s)...";
+            statusTag.className = "px-4 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full";
+            
+            // Tự động tải lại dữ liệu sau 45 giây (để GitHub kịp chạy xong)
+            setTimeout(() => {
+                loadAutoPrices();
+                btn.classList.remove('animate-spin');
+                btn.disabled = false;
+            }, 45000);
+        } else {
+            throw new Error('Lỗi gửi lệnh');
+        }
+    } catch (e) {
+        statusTag.innerText = "❌ Lỗi: Không thể kết nối GitHub";
+        btn.classList.remove('animate-spin');
+        btn.disabled = false;
     }
-    document.addEventListener('DOMContentLoaded', loadAutoPrices);
+}
     </script>
 </body>
 </html>
