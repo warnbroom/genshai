@@ -2,7 +2,7 @@ name: Update Petrolimex Prices
 
 on:
   schedule:
-    - cron: '10 5 * * *' # Chạy lúc 7h sáng VN hàng ngày
+    - cron: '15 5 * * *' # Chạy lúc 7h sáng VN hàng ngày
   workflow_dispatch:      # Nút bấm chạy thủ công
 
 jobs:
